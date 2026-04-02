@@ -1,48 +1,41 @@
 package server
-
 import "net/http"
-
-func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(dashHTML))
-}
-
-const dashHTML = `<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Escrow</title>
-<style>
-:root{--bg:#1a1410;--bg2:#241e18;--bg3:#2e261e;--rust:#c45d2c;--rl:#e8753a;--leather:#a0845c;--cream:#f0e6d3;--cd:#bfb5a3;--cm:#7a7060;--gold:#d4a843;--green:#4a9e5c;--red:#c44040;--mono:'JetBrains Mono',monospace;--serif:'Libre Baskerville',Georgia,serif}
-*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--cream);font-family:var(--mono);font-size:13px}
-a{color:var(--rl);text-decoration:none}a:hover{color:var(--gold)}
-.hdr{padding:.7rem 1.2rem;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center}
-.hdr h1{font-family:var(--serif);font-size:1rem}.hdr h1 span{color:var(--rl)}
-.stats{font-size:.7rem;color:var(--leather)}.stats b{color:var(--cream);font-weight:600}
-.main{max-width:700px;margin:0 auto;padding:1.5rem}
-.card{background:var(--bg2);border:1px solid var(--bg3);padding:.8rem 1rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
-.card-title{font-size:.8rem;font-weight:600}.card-sub{font-size:.65rem;color:var(--cd)}
-.btn{font-family:var(--mono);font-size:.7rem;padding:.3rem .6rem;border:1px solid;cursor:pointer;background:transparent}
-.btn-p{border-color:var(--rust);color:var(--rl)}.btn-p:hover{background:var(--rust);color:var(--cream)}
-.btn-d{border-color:var(--bg3);color:var(--cm)}.btn-d:hover{border-color:var(--red);color:var(--red)}
-input{background:var(--bg);border:1px solid var(--bg3);color:var(--cream);padding:.4rem .6rem;font-family:var(--mono);font-size:.8rem;width:100%;outline:none;margin-bottom:.5rem}
-input:focus{border-color:var(--rust)}
-.empty{text-align:center;padding:2rem;color:var(--cm);font-style:italic;font-family:var(--serif)}
-</style>
+func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) { w.Header().Set("Content-Type","text/html; charset=utf-8"); w.Write([]byte(dashHTML)) }
+const dashHTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Escrow</title>
+<style>:root{--bg:#1a1410;--bg2:#241e18;--bg3:#2e261e;--rust:#c45d2c;--rl:#e8753a;--leather:#a0845c;--cream:#f0e6d3;--cd:#bfb5a3;--cm:#7a7060;--gold:#d4a843;--green:#4a9e5c;--red:#c44040;--mono:'JetBrains Mono',Consolas,monospace;--serif:'Libre Baskerville',Georgia,serif}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--cream);font-family:var(--mono);font-size:13px;line-height:1.6}.hdr{padding:.6rem 1.2rem;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center}.hdr h1{font-family:var(--serif);font-size:1rem}.hdr h1 span{color:var(--rl)}.main{max-width:900px;margin:0 auto;padding:1rem 1.2rem}.btn{font-family:var(--mono);font-size:.68rem;padding:.3rem .6rem;border:1px solid;cursor:pointer;background:transparent;transition:.15s}.btn-p{border-color:var(--rust);color:var(--rl)}.btn-p:hover{background:var(--rust);color:var(--cream)}.btn-s{border-color:var(--green);color:var(--green)}.btn-s:hover{background:var(--green);color:var(--bg)}.btn-d{border-color:var(--bg3);color:var(--cm)}.btn-d:hover{border-color:var(--red);color:var(--red)}.overview{display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.7rem;color:var(--leather)}.overview .stat b{display:block;font-size:1.2rem;color:var(--cream)}.card{background:var(--bg2);border:1px solid var(--bg3);padding:.7rem;margin-bottom:.4rem;cursor:pointer;transition:.1s}.card:hover{background:var(--bg3)}.card h3{font-size:.8rem;margin-bottom:.2rem}.card-meta{font-size:.65rem;color:var(--cm);display:flex;gap:.7rem}.st-pending{color:var(--gold)}.st-approved{color:var(--green)}.st-rejected{color:var(--red)}.empty{text-align:center;padding:2rem;color:var(--cm);font-style:italic;font-family:var(--serif)}.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:100}.modal{background:var(--bg2);border:1px solid var(--bg3);padding:1.5rem;width:95%;max-width:600px;max-height:90vh;overflow-y:auto}.modal h2{font-family:var(--serif);font-size:.9rem;margin-bottom:1rem}label.fl{display:block;font-size:.65rem;color:var(--leather);text-transform:uppercase;letter-spacing:1px;margin-bottom:.2rem;margin-top:.5rem}input[type=text],textarea,select{background:var(--bg);border:1px solid var(--bg3);color:var(--cream);padding:.35rem .5rem;font-family:var(--mono);font-size:.78rem;width:100%;outline:none}textarea{resize:vertical;min-height:60px}</style>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-</head><body>
-<div class="hdr"><h1><span>Escrow</span></h1><div class="stats">Total: <b id="ct">-</b></div></div>
-<div class="main">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-<span style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--rust)">All workflows</span>
-<button class="btn btn-p" onclick="showCreate()">+ New</button>
-</div>
-<div id="list"></div>
-</div>
+</head><body><div class="hdr"><h1><span>Escrow</span></h1><div style="display:flex;gap:.3rem"><button class="btn btn-p" onclick="showNewWF()">+ Workflow</button><button class="btn btn-p" onclick="showSubmit()">+ Request</button></div></div>
+<div class="main"><div class="overview" id="overview"></div><div id="list"></div></div><div id="modal"></div>
 <script>
-async function load(){const r=await fetch('/api/workflows');const d=await r.json();document.getElementById('ct').textContent=d.count;
-const el=document.getElementById('list');if(!d.workflows.length){el.innerHTML='<div class="empty">No workflows yet.</div>';return}
-el.innerHTML=d.workflows.map(e=>'<div class="card"><div><div class="card-title">'+esc(e.name||e.title||e.id)+'</div><div class="card-sub">'+esc(e.created_at)+'</div></div><button class="btn btn-d" onclick="del(\''+e.id+'\')">Delete</button></div>').join('')}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-function showCreate(){const n=prompt('Name:');if(!n)return;fetch('/api/workflows',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})}).then(load)}
-async function del(id){if(!confirm('Delete?'))return;await fetch('/api/workflows/'+id,{method:'DELETE'});load()}
-load();setInterval(load,30000)
-</script></body></html>` + "`"
+let workflows=[],requests=[];
+async function api(u,o){return(await fetch(u,o)).json()}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function timeAgo(d){if(!d)return'';const s=Math.floor((Date.now()-new Date(d))/1e3);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago'}
+async function init(){
+  const[wd,rd,sd]=await Promise.all([api('/api/workflows'),api('/api/requests'),api('/api/stats')]);
+  workflows=wd.workflows||[];requests=rd.requests||[];
+  document.getElementById('overview').innerHTML='<div class="stat"><b>'+sd.pending+'</b>Pending</div><div class="stat"><b>'+sd.approved+'</b>Approved</div><div class="stat"><b>'+sd.rejected+'</b>Rejected</div>';
+  render()
+}
+function render(){
+  document.getElementById('list').innerHTML=requests.length?requests.map(r=>
+    '<div class="card" onclick="showReq(\''+r.id+'\')"><h3>'+esc(r.title)+'</h3><div class="card-meta"><span class="st-'+r.status+'">'+r.status+'</span><span>by '+esc(r.submitter)+'</span><span>'+r.decisions.length+' decisions</span><span>'+timeAgo(r.created_at)+'</span></div></div>').join(''):'<div class="empty">No requests yet.</div>'
+}
+async function showReq(id){
+  const r=await api('/api/requests/'+id);
+  const decs=r.decisions.map(d=>'<div style="padding:.3rem 0;border-bottom:1px solid var(--bg3);font-size:.72rem"><b class="st-'+d.action+'">'+d.action+'</b> by '+esc(d.approver)+(d.comment?' — '+esc(d.comment):'')+' <span style="color:var(--cm)">'+timeAgo(d.created_at)+'</span></div>').join('');
+  const actions=r.status==='pending'?'<div style="margin-top:.5rem;display:flex;gap:.3rem;align-items:flex-end"><input type="text" id="dec-who" placeholder="Your name" style="width:120px;font-size:.72rem"><input type="text" id="dec-cmt" placeholder="Comment" style="flex:1;font-size:.72rem"><button class="btn btn-s" onclick="decide(\''+id+'\',\'approve\')">Approve</button><button class="btn btn-d" onclick="decide(\''+id+'\',\'reject\')">Reject</button></div>':'';
+  document.getElementById('modal').innerHTML='<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h2>'+esc(r.title)+'</h2><div style="font-size:.7rem;color:var(--cm)">By '+esc(r.submitter)+' · <span class="st-'+r.status+'">'+r.status+'</span> · '+timeAgo(r.created_at)+'</div>'+(r.body?'<div style="padding:.5rem;background:var(--bg);border:1px solid var(--bg3);margin:.5rem 0;font-size:.78rem;color:var(--cd)">'+esc(r.body)+'</div>':'')+'<div style="font-size:.7rem;color:var(--leather);margin:.5rem 0">Decisions</div>'+(decs||'<div style="color:var(--cm);font-size:.72rem">No decisions yet.</div>')+actions+'</div></div>'
+}
+async function decide(id,action){
+  const approver=document.getElementById('dec-who').value||'anonymous',comment=document.getElementById('dec-cmt').value;
+  await api('/api/requests/'+id+'/'+(action==='approve'?'approve':'reject'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({approver,comment})});
+  showReq(id);init()
+}
+function showNewWF(){document.getElementById('modal').innerHTML='<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h2>New Workflow</h2><label class="fl">Name</label><input type="text" id="nw-name"><label class="fl">Approvers (comma-separated)</label><input type="text" id="nw-appr" placeholder="alice, bob"><label class="fl">Require all approvers?</label><select id="nw-all"><option value="0">Any one</option><option value="1">All required</option></select><div style="display:flex;gap:.5rem;margin-top:1rem"><button class="btn btn-p" onclick="saveWF()">Create</button><button class="btn btn-d" onclick="closeModal()">Cancel</button></div></div></div>'}
+async function saveWF(){const b={name:document.getElementById('nw-name').value,approvers:(document.getElementById('nw-appr').value||'').split(',').map(s=>s.trim()).filter(Boolean),require_all:document.getElementById('nw-all').value==='1'};if(!b.name){alert('Name required');return};await api('/api/workflows',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});closeModal();init()}
+function showSubmit(){const opts=workflows.map(w=>'<option value="'+w.id+'">'+esc(w.name)+'</option>').join('');document.getElementById('modal').innerHTML='<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h2>Submit Request</h2><label class="fl">Workflow</label><select id="sr-wf">'+opts+'</select><label class="fl">Title</label><input type="text" id="sr-title"><label class="fl">Details</label><textarea id="sr-body" rows="3"></textarea><label class="fl">Your Name</label><input type="text" id="sr-sub"><div style="display:flex;gap:.5rem;margin-top:1rem"><button class="btn btn-p" onclick="saveReq()">Submit</button><button class="btn btn-d" onclick="closeModal()">Cancel</button></div></div></div>'}
+async function saveReq(){const b={workflow_id:document.getElementById('sr-wf').value,title:document.getElementById('sr-title').value,body:document.getElementById('sr-body').value,submitter:document.getElementById('sr-sub').value};if(!b.title){alert('Title required');return};await api('/api/requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});closeModal();init()}
+function closeModal(){document.getElementById('modal').innerHTML=''}
+init()
+</script></body></html>`
