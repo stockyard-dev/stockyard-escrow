@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,34 +11,43 @@ import (
 	"github.com/stockyard-dev/stockyard-escrow/internal/store"
 )
 
+var version = "dev"
+
 func main() {
-	port := os.Getenv("PORT")
+	portFlag := flag.String("port", "", "HTTP port (overrides PORT env var)")
+	dataFlag := flag.String("data", "", "Data directory (overrides DATA_DIR env var)")
+	flag.Parse()
+
+	port := *portFlag
 	if port == "" {
-		port = "9330"
+		port = os.Getenv("PORT")
 	}
-	dataDir := os.Getenv("DATA_DIR")
+	if port == "" {
+		port = "9700"
+	}
+
+	dataDir := *dataFlag
+	if dataDir == "" {
+		dataDir = os.Getenv("DATA_DIR")
+	}
 	if dataDir == "" {
 		dataDir = "./escrow-data"
 	}
 
 	db, err := store.Open(dataDir)
 	if err != nil {
-		log.Fatalf("escrow: open database: %v", err)
+		log.Fatalf("escrow: %v", err)
 	}
 	defer db.Close()
 
-	srv := server.New(db, server.DefaultLimits())
+	srv := server.New(db, server.DefaultLimits(), dataDir)
 
-	fmt.Printf("\n  Escrow — Self-hosted approval workflow engine\n")
-	fmt.Printf("  Questions? hello@stockyard.dev\n")
-	fmt.Printf("  ─────────────────────────────────\n")
+	fmt.Printf("\n  Escrow v%s — Self-hosted approval workflows\n", version)
 	fmt.Printf("  Dashboard:  http://localhost:%s/ui\n", port)
 	fmt.Printf("  API:        http://localhost:%s/api\n", port)
 	fmt.Printf("  Data:       %s\n", dataDir)
-	fmt.Printf("  ─────────────────────────────────\n\n")
+	fmt.Printf("  Questions?  hello@stockyard.dev — I read every message\n\n")
 
 	log.Printf("escrow: listening on :%s", port)
-	if err := http.ListenAndServe(":"+port, srv); err != nil {
-		log.Fatalf("escrow: %v", err)
-	}
+	log.Fatal(http.ListenAndServe(":"+port, srv))
 }
